@@ -1,0 +1,8 @@
+steps:
+  - name: Show GitHub context
+    run: |
+      echo "Repository: ${{ github.repository }}"
+      echo "Branch: ${{ github.ref_name }}"
+      echo "Actor (who triggered): ${{ github.actor }}"
+      echo "Event name: ${{ github.event_name }}"
+      echo "Commit SHA: ${{ github.sha }}"

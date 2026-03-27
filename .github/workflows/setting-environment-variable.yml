@@ -1,0 +1,25 @@
+name: Environment Variables Demo
+
+# Environment variables for the entire workflow
+env:
+  GLOBAL_VAR: "This applies to all jobs"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    # Environment variables for this specific job
+    env:
+      JOB_VAR: "This applies only to this job"
+    
+    steps:
+      # Environment variable for a single step
+      - name: Set step-level variable
+        run: |
+          echo "STEP_VAR=This applies to this step only" >> $GITHUB_ENV
+      
+      - name: Use all variables
+        run: |
+          echo "Global: ${{ env.GLOBAL_VAR }}"
+          echo "Job: ${{ env.JOB_VAR }}"
+          echo "Step: ${{ env.STEP_VAR }}"

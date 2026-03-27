@@ -1,0 +1,29 @@
+name: Pass Data Between Jobs
+
+jobs:
+  generate-data:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      timestamp: ${{ steps.get-time.outputs.timestamp }}
+    steps:
+      - name: Get version from package.json
+        id: get-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Get current timestamp
+        id: get-time
+        run: |
+          TIMESTAMP=$(date -Iseconds)
+          echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+  
+  use-data:
+    needs: generate-data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use the data
+        run: |
+          echo "Version: ${{ needs.generate-data.outputs.version }}"
+          echo "Timestamp: ${{ needs.generate-data.outputs.timestamp }}"

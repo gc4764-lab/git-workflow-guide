@@ -1,0 +1,46 @@
+name: Comprehensive Testing Matrix
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Stop all matrix jobs if one fails (useful for quick feedback)
+      fail-fast: true
+      
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18.x, 20.x]
+        
+        # Include/exclude specific combinations
+        exclude:
+          # Don't test Node 18 on Windows
+          - os: windows-latest
+            node-version: 18.x
+          
+          # Don't test Node 20 on macOS (optional)
+          - os: macos-latest
+            node-version: 20.x
+        
+        # Add extra combinations
+        include:
+          # Also test Node 21 on Ubuntu only
+          - os: ubuntu-latest
+            node-version: 21.x
+            experimental: true
+    
+    continue-on-error: ${{ matrix.experimental || false }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - run: npm ci
+      - run: npm test
+      
+      - if: matrix.experimental
+        run: echo "⚠️ Experimental configuration - failures won't block the workflow"

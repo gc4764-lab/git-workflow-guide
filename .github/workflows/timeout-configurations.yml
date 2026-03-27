@@ -1,0 +1,20 @@
+jobs:
+  slow-task:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30  # Kill after 30 minutes
+    steps:
+      - run: |
+          # This will be killed after 30 minutes
+          ./long-running-script.sh
+  
+  timeout-at-step-level:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quick task
+        run: echo "This is fine"
+      
+      - name: Slow task with timeout
+        timeout-minutes: 5
+        run: |
+          # Will be killed after 5 minutes even if job has more time
+          while true; do sleep 1; done

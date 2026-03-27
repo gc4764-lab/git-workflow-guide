@@ -1,0 +1,24 @@
+name: Daily Database Backup
+
+on:
+  schedule:
+    # Runs at 2:30 AM every day
+    - cron: '30 2 * * *'
+  workflow_dispatch:  # Also allows manual trigger
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Run backup script
+        run: |
+          curl -X POST https://api.example.com/backup \
+            -H "Authorization: Bearer ${{ secrets.API_TOKEN }}"
+      
+      - name: Send notification
+        if: failure()
+        run: |
+          curl -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+            -d "channel=alerts&text=Backup failed!"

@@ -1,0 +1,22 @@
+name: Auto-create Issue on Failure
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+jobs:
+  create-issue:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const workflow = context.payload.workflow_run;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Workflow failed: ${workflow.name}`,
+              body: `Workflow run failed: ${workflow.html_url}\n\nBranch: ${workflow.head_branch}\nCommit: ${workflow.head_sha}`
+            });

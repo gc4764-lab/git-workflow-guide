@@ -1,0 +1,27 @@
+# .github/workflows/hello-world.yml
+
+# 1. Name of the workflow (appears in the GitHub Actions tab)
+name: My First Workflow
+
+# 2. Event: When should this run?
+on: [push]
+
+# 3. Jobs: What tasks should it run?
+jobs:
+  # This is the ID of the job (can be anything, e.g., "build", "test")
+  say-hello:
+    # The type of virtual machine to run on
+    runs-on: ubuntu-latest
+    
+    # Steps: The list of tasks
+    steps:
+      # The `uses` keyword means "use a pre-made action from the marketplace"
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      
+      # The `run` keyword means "execute this command in the terminal"
+      - name: Say Hello
+        run: echo "Hello World, this workflow is running!"
+      
+      - name: List files in the repo
+        run: ls -la

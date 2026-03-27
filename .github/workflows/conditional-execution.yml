@@ -1,0 +1,25 @@
+jobs:
+  conditional-example:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Always runs
+        run: echo "This always runs"
+      
+      - name: Only runs on main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "This is the main branch"
+      
+      - name: Only runs on pull requests
+        if: github.event_name == 'pull_request'
+        run: echo "This is a pull request"
+      
+      - name: Only runs if previous step succeeded
+        run: echo "Success!"
+      
+      - name: Only runs if previous step failed
+        if: failure()
+        run: echo "Something went wrong above"
+      
+      - name: Always runs (even if previous failed)
+        if: always()
+        run: echo "This runs no matter what"

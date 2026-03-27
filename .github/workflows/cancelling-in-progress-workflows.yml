@@ -1,0 +1,18 @@
+name: Fast CI
+
+on:
+  pull_request:
+    branches: [main]
+
+# Cancel previous runs on the same PR when new code is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test  # Only the latest commit's tests run

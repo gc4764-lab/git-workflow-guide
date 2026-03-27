@@ -1,0 +1,28 @@
+name: CI with Notifications
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+  
+  notify:
+    needs: build
+    if: always()  # Always run, even if build fails
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_TITLE: "Build Status"
+          SLACK_MESSAGE: |
+            Repository: ${{ github.repository }}
+            Status: ${{ job.status }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+          SLACK_COLOR: ${{ job.status == 'success' && 'good' || 'danger' }}

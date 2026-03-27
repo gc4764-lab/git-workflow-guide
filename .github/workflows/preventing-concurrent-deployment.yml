@@ -1,0 +1,16 @@
+name: Safe Deployment
+
+on:
+  push:
+    branches: [main]
+
+# Only allow one deployment at a time
+concurrency: 
+  group: deployment-${{ github.ref }}
+  cancel-in-progress: false  # Don't cancel running deployments
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying..."

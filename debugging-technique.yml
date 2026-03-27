@@ -1,0 +1,7 @@
+- name: Debug - Show environment
+  run: |
+    echo "GitHub context:"
+    echo "Event: ${{ github.event_name }}"
+    echo "Ref: ${{ github.ref }}"
+    echo "Workspace:"
+    ls -la

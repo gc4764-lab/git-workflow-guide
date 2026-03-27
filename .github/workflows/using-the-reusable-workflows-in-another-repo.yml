@@ -1,0 +1,12 @@
+name: Main Workflow
+
+on: [push]
+
+jobs:
+  # Call the reusable workflow
+  call-test:
+    uses: my-org/shared-workflows/.github/workflows/test-template.yml@main
+    with:
+      node-version: '18.x'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

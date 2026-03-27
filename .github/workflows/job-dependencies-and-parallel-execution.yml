@@ -1,0 +1,54 @@
+name: Advanced Job Control
+
+on: [push]
+
+jobs:
+  # These three jobs run in parallel
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run lint
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+  
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+  
+  # This job waits for lint, test, AND build to succeed
+  deploy-staging:
+    needs: [lint, test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+      - run: echo "Deploying to staging..."
+  
+  # This runs after deploy-staging, but only on main branch
+  deploy-production:
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production  # Requires approval
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+      - run: echo "Deploying to production
